@@ -1,0 +1,58 @@
+using UnityEngine;
+using UnityEngine.InputSystem;
+
+public class InputManager : MonoBehaviour
+{
+    public static Vector2 left, right;
+
+    private InputAction actionLeft, actionRight;
+
+    private void Awake()
+    {
+        actionLeft = InputSystem.actions.FindActionMap("Controls").FindAction("Left");
+        actionRight = InputSystem.actions.FindActionMap("Controls").FindAction("Right");
+    }
+
+    void OnEnable()
+    {
+        actionLeft.performed += OnLeftPerformed;
+        actionLeft.canceled += OnLeftCanceled;
+        actionRight.performed += OnRightPerformed;
+        actionRight.canceled += OnRightCanceled;
+    }
+    void OnDisable()
+    {
+        actionLeft.performed -= OnLeftPerformed;
+        actionLeft.canceled -= OnLeftCanceled;
+        actionRight.performed -= OnRightPerformed;
+        actionRight.canceled -= OnRightCanceled;
+    }
+
+    private static bool debugPlaying;
+    private void OnLeftPerformed(InputAction.CallbackContext context)
+    {
+        left = context.ReadValue<Vector2>();
+        if (!debugPlaying)
+        {
+            debugPlaying = true;
+            SoundManager.StartChord(Pitch.Chord.Maj, 440.0);
+        }
+    }
+    private void OnLeftCanceled(InputAction.CallbackContext context)
+    {
+        left = Vector2.zero;
+        if (debugPlaying)
+        {
+            debugPlaying = false;
+            SoundManager.StopChord();
+        }
+    }
+    private void OnRightPerformed(InputAction.CallbackContext context)
+    {
+        right = context.ReadValue<Vector2>();
+    }
+    private void OnRightCanceled(InputAction.CallbackContext context)
+    {
+        right = Vector2.zero;
+    }
+}
