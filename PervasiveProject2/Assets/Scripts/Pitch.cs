@@ -1,4 +1,5 @@
 using System;
+using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -45,13 +46,13 @@ public static class Pitch
         }
         return frequencies;
     }
-    public static double GetAmplitude(double[] frequencies, double time)
+    public static double GetAmplitude(NativeArray<double> frequencies, double time)
     {
         double amplitude = 0;
         for (int i = 0; i < frequencies.Length; i++)
         {
-            amplitude += Math.Sin(2.0 * Math.PI * frequencies[i] * time);
+            amplitude += math.sin(2.0 * Math.PI * frequencies[i] * time);
         }
-        return amplitude * 0.2;
+        return amplitude / (double)(frequencies.Length + 0.01);
     }
 }

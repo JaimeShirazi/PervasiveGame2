@@ -35,7 +35,7 @@ public class InputManager : MonoBehaviour
         if (!debugPlaying)
         {
             debugPlaying = true;
-            SoundManager.StartChord(Pitch.Chord.Maj, 440.0);
+            SoundManager.ReplacePitch(Pitch.Chord.Maj, 0);
         }
     }
     private void OnLeftCanceled(InputAction.CallbackContext context)
@@ -44,7 +44,7 @@ public class InputManager : MonoBehaviour
         if (debugPlaying)
         {
             debugPlaying = false;
-            SoundManager.StopChord();
+            SoundManager.Stop();
         }
     }
     private void OnRightPerformed(InputAction.CallbackContext context)

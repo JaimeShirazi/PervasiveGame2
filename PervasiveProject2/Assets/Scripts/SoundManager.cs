@@ -1,79 +1,90 @@
-using UnityEditor.ShaderGraph.Internal;
+using System.Collections.Generic;
+using System.Linq;
+using Unity.Collections;
+using Unity.Jobs;
 using UnityEngine;
 
 public class SoundManager : MonoBehaviour
 {
-    [SerializeField] private LineRenderer line;
+    private struct WanderingPitchCenter
+    {
+        private int rootIntervalOffset;
+        private double pitch;
+        public double SetNewRoot(int interval)
+        {
+            double newPitch = Pitch.GetJustInterval(pitch, interval - rootIntervalOffset);
+            pitch = newPitch;
+            rootIntervalOffset = interval;
+            return newPitch;
+        }
+        public static WanderingPitchCenter Default => new WanderingPitchCenter()
+        {
+            rootIntervalOffset = 0,
+            pitch = 440.0
+        };
+    }
+
+    private WanderingPitchCenter pitch = WanderingPitchCenter.Default;
+
+    private List<WaveData> pendingWaveData = new();
+    private List<WaveCalculator> activeWaves = new();
+
+    private List<WaveCalculator> pendingWaveEnds = new();
 
     private static SoundManager instance;
     private void Awake()
     {
         instance = this;
     }
-    public static void StartChord(Pitch.Chord chord, double root)
+    public static void ReplacePitch(Pitch.Chord chord, int rootIntervalOffset)
     {
-        instance.startNext = true;
-        int[] semitoneOffsets = Pitch.GetChordIntervalOffsets(chord);
-        instance.frequencies = Pitch.GetFrequencies(root, semitoneOffsets);
+        Stop();
+        double targetPitch = instance.pitch.SetNewRoot(rootIntervalOffset);
+        WaveData newData = new WaveData(targetPitch, chord);
+        instance.pendingWaveData.Add(newData);
     }
-    public static void StopChord()
+    public static void Stop()
     {
-        instance.started = -1;
+        instance.pendingWaveData.Clear();
+        instance.pendingWaveEnds.AddRange(instance.activeWaves);
     }
 
     int sampleRate;
-    float[] recentIndexes;
-
-    bool startNext;
-    double started = -1;
-    double[] frequencies;
 
     private void Update()
     {
         sampleRate = AudioSettings.outputSampleRate;
-
-        if (recentIndexes == null) return;
-        line.positionCount = recentIndexes.Length;
-        for (int i = 0; i < recentIndexes.Length; i++)
-        {
-            float horizontal = i / (float)recentIndexes.Length;
-            horizontal *= 2f;
-            horizontal -= 1f;
-            horizontal *= 4f;
-            line.SetPosition(i, new Vector3(horizontal, recentIndexes[i], 0));
-        }
     }
     public void OnAudioFilterRead(float[] input, int channels)
     {
-        if (startNext)
+        //Begin waves that are pending
+        for (int i = 0; i < pendingWaveData.Count; i++)
         {
-            started = AudioSettings.dspTime;
-            startNext = false;
+            //TODO: Replace all of this when WaveCalculator is pooled instead of instantiated/destroyed
+            activeWaves.Insert(0, new WaveCalculator());
+            activeWaves[0].Set(pendingWaveData[i], AudioSettings.dspTime);
         }
+        pendingWaveData.Clear();
 
-        if (started < 0) return;
-
-        recentIndexes = new float[input.Length];
-
-        float minRange = float.MaxValue;
-        float maxRange = float.MinValue;
-        for (int i = 0; i < input.Length / channels; i++)
+        //End waves that are pending to end
+        for (int i = 0; i < pendingWaveEnds.Count; i++)
         {
-            double time = (AudioSettings.dspTime - started) + (i / (double)sampleRate);
-            float amplitude = (float)Pitch.GetAmplitude(frequencies, time);
-
-            if ((float)time < minRange)
-                minRange = (float)time;
-            if ((float)time > maxRange)
-                maxRange = (float)time;
-
-            for (int channel = 0; channel < channels; channel++)
-            {
-                input[(i * channels) + channel] = amplitude;
-                recentIndexes[(i * channels) + channel] = amplitude;
-            }
+            pendingWaveEnds[i].Unset(AudioSettings.dspTime);
         }
+        pendingWaveEnds.Clear();
 
-        Debug.Log(string.Format("({0}, {1})", minRange, maxRange));
+        //Remove waves that have completely released
+        //TODO: Replace all of this when WaveCalculator is pooled instead of instantiated/destroyed
+        foreach (WaveCalculator waveCalc in activeWaves.Where(calculator => !calculator.IsActiveAtTime(AudioSettings.dspTime)))
+        {
+            waveCalc.Dispose();
+        }
+        activeWaves.RemoveAll(calculator => !calculator.IsActiveAtTime(AudioSettings.dspTime));
+
+        //Calculate the amplitudes
+        for (int i = 0; i < activeWaves.Count; i++)
+        {
+            activeWaves[i].Calculate(input, channels, sampleRate, AudioSettings.dspTime);
+        }
     }
 }
