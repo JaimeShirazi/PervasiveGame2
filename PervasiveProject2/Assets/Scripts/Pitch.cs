@@ -50,7 +50,7 @@ public static class Pitch
         double amplitude = 0;
         for (int i = 0; i < frequencies.Length; i++)
         {
-            amplitude += math.sin(2.0 * math.PI_DBL * frequencies[i] - time);
+            amplitude += Math.Sin(2.0 * Math.PI * frequencies[i] * time);
         }
         return amplitude * 0.2;
     }
