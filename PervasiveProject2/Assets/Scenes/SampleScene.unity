@@ -871,6 +871,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   knob: {fileID: 2044653987}
+  collection: {fileID: 11400000, guid: eedfeb2bc1f5c694d9f2dcddbb493fd8, type: 2}
 --- !u!1 &1188164419
 GameObject:
   m_ObjectHideFlags: 0
