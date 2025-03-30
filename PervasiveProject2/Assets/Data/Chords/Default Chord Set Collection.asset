@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9ef4287485cc3d040a535f78532c531c, type: 3}
+  m_Name: Default Chord Set Collection
+  m_EditorClassIdentifier: 
+  sets:
+  - {fileID: 11400000, guid: e38a7217f5640484487822760bbe8299, type: 2}
+  - {fileID: 11400000, guid: 05bda91fc513e534c9832aa2f30befde, type: 2}
+  - {fileID: 11400000, guid: cf359eaca48581a4e8455dee401930fe, type: 2}
+  - {fileID: 11400000, guid: 4a1b3e340ff71f140a2c4e552b19c8cf, type: 2}
+  - {fileID: 11400000, guid: 283f7ae3d51ff03419811b1c17cef6cd, type: 2}
+  - {fileID: 11400000, guid: f3107df231929d84c829a3f1f8e3e46f, type: 2}

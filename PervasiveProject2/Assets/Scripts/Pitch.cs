@@ -25,12 +25,14 @@ public static class Pitch
     };
     public enum Chord
     {
-        Sus4, Maj, Min, Min7, Dom7, Maj7, Dom9
+        Maj, Min, Min7, Dom7, Dom9, Sus4, Maj7, Dim, HalfDim
     }
     public static int[] GetChordIntervalOffsets(Chord chord) => chord switch
     {
         Chord.Sus4     => new int[] { 0, 5, 7 },
         Chord.Min      => new int[] { 0, 3, 7 },
+        Chord.Dim      => new int[] { 0, 3, 6, 9 },
+        Chord.HalfDim  => new int[] { 0, 3, 6, 10 },
         Chord.Min7     => new int[] { 0, 3, 7, 10 },
         Chord.Dom7     => new int[] { 0, 4, 7, 10 },
         Chord.Maj7     => new int[] { 0, 4, 7, 11 },
@@ -52,6 +54,9 @@ public static class Pitch
         for (int i = 0; i < frequencies.Length; i++)
         {
             amplitude += math.sin(2.0 * Math.PI * frequencies[i] * time);
+
+            //taper the high frequencies off by a little
+            amplitude *= (math.pow(0.7, i) * 0.5) + 0.5;
         }
         return amplitude / (double)(frequencies.Length + 0.01);
     }

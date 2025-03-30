@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5efb172372f95124b9e6d62a94baa7f3, type: 3}
+  m_Name: Min
+  m_EditorClassIdentifier: 
+  label: Minor
+  associatedTonality: 1
+  chord1: 1
+  chord2: 7
+  chord3: 8
+  chord4: 0
+  chord5: 7
+  chord6: 1
+  chord7: 7
+  chord8: 3
+  chord9: 0
+  chord10: 1
+  chord11: 0
+  chord12: 8

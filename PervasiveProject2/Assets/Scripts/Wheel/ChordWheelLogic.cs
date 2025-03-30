@@ -2,27 +2,30 @@ using UnityEngine;
 
 public class ChordWheelLogic : BaseWheelLogic
 {
+    public ChordSetCollectionSO collection;
     protected override InputSource Source => InputSource.RightStick;
-    protected override WheelManager.Values InputHeld()
+    protected override int Segments => collection.sets.Count;
+    protected override GlobalWheelState.Values InputHeld(int segment)
     {
-        int segment = GetSegment(7);
-
-        return new WheelManager.Values()
+        GlobalWheelState.SetChordSet(collection.sets[segment]);
+        return new GlobalWheelState.Values()
         {
-            leftHeld = WheelManager.Current.leftHeld,
+            leftHeld = GlobalWheelState.Current.leftHeld,
             rightHeld = true,
-            rootIntervalOffset = WheelManager.Current.rootIntervalOffset,
-            chord = (Pitch.Chord)segment
+            pitchIndex = GlobalWheelState.Current.pitchIndex,
+            pitchSet = GlobalWheelState.Current.pitchSet,
+            chordSet = GlobalWheelState.CurrentChordSet
         };
     }
-    protected override WheelManager.Values InputReleased()
+    protected override GlobalWheelState.Values InputReleased()
     {
-        return new WheelManager.Values()
+        return new GlobalWheelState.Values()
         {
-            leftHeld = WheelManager.Current.leftHeld,
+            leftHeld = GlobalWheelState.Current.leftHeld,
             rightHeld = false,
-            rootIntervalOffset = WheelManager.Current.rootIntervalOffset,
-            chord = WheelManager.Current.chord
+            pitchIndex = GlobalWheelState.Current.pitchIndex,
+            pitchSet = GlobalWheelState.Current.pitchSet,
+            chordSet = GlobalWheelState.CurrentChordSet
         };
     }
 }

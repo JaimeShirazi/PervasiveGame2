@@ -8,6 +8,7 @@ public class SoundManager : MonoBehaviour
 {
     private struct WanderingPitchCenter
     {
+        const double BASE_PITCH = 266.6666666666667;
         private int rootIntervalOffset;
         private double pitch;
         public double SetNewRoot(int interval)
@@ -20,8 +21,13 @@ public class SoundManager : MonoBehaviour
         public static WanderingPitchCenter Default => new WanderingPitchCenter()
         {
             rootIntervalOffset = 0,
-            pitch = 440.0
+            pitch = BASE_PITCH
         };
+        public void Restore()
+        {
+            rootIntervalOffset = 0;
+            pitch = BASE_PITCH;
+        }
         public override string ToString() => string.Format("Pitch: {0}, Semitone offset from root: {1}", pitch, rootIntervalOffset);
     }
 
@@ -39,13 +45,15 @@ public class SoundManager : MonoBehaviour
     }
     public static void ReplacePitch(Pitch.Chord chord, int rootIntervalOffset)
     {
-        Stop();
+        Stop(false);
         double targetPitch = instance.pitch.SetNewRoot(rootIntervalOffset);
         WaveData newData = new WaveData(targetPitch, chord);
         instance.pendingWaveData.Add(newData);
     }
-    public static void Stop()
+    public static void Stop(bool restorePitch = true)
     {
+        if (restorePitch)
+            instance.pitch.Restore();
         foreach (WaveData data in instance.pendingWaveData)
         {
             data.Dispose();

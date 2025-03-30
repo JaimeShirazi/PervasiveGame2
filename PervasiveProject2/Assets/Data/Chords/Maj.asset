@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5efb172372f95124b9e6d62a94baa7f3, type: 3}
+  m_Name: Maj
+  m_EditorClassIdentifier: 
+  label: Major
+  associatedTonality: 0
+  chord1: 0
+  chord2: 7
+  chord3: 1
+  chord4: 7
+  chord5: 1
+  chord6: 0
+  chord7: 7
+  chord8: 0
+  chord9: 7
+  chord10: 1
+  chord11: 0
+  chord12: 8

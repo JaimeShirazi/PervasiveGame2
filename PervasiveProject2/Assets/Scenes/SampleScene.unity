@@ -131,6 +131,7 @@ GameObject:
   - component: {fileID: 161432525}
   - component: {fileID: 161432524}
   - component: {fileID: 161432526}
+  - component: {fileID: 161432527}
   m_Layer: 5
   m_Name: Right Stick
   m_TagString: Untagged
@@ -170,7 +171,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 2100000, guid: 84c2ce408ed5ed94a8f3f998052b97ef, type: 2}
+  m_Material: {fileID: 2100000, guid: 13fd7e69d48eabe4290be4a80d3d3c51, type: 2}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
@@ -208,7 +209,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e3c1bf0a4b399504ea7165f909504143, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  visual: {fileID: 161432527}
   knob: {fileID: 1188164420}
+  collection: {fileID: 11400000, guid: 369de2eb85180534bb39cce37d00d85e, type: 2}
+--- !u!114 &161432527
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 161432521}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f79ab5d57579948409d195d89f5e6bf7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &330585543
 GameObject:
   m_ObjectHideFlags: 0
@@ -477,6 +492,7 @@ GameObject:
   m_Component:
   - component: {fileID: 781285242}
   - component: {fileID: 781285243}
+  - component: {fileID: 781285244}
   m_Layer: 0
   m_Name: Global Managers
   m_TagString: Untagged
@@ -511,6 +527,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 62e91447c8634334999cf51ff4040c22, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &781285244
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 781285241}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 51efe974fc68e464f82f3bd1f6f9eb1a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  wheelLogics:
+  - {fileID: 1148819708}
+  - {fileID: 161432526}
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0
@@ -793,6 +824,7 @@ GameObject:
   - component: {fileID: 1148819707}
   - component: {fileID: 1148819706}
   - component: {fileID: 1148819708}
+  - component: {fileID: 1148819709}
   m_Layer: 5
   m_Name: Left Stick
   m_TagString: Untagged
@@ -870,8 +902,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ae62b2c622c97f49bd3f0237af1e325, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  visual: {fileID: 1148819709}
   knob: {fileID: 2044653987}
   collection: {fileID: 11400000, guid: eedfeb2bc1f5c694d9f2dcddbb493fd8, type: 2}
+--- !u!114 &1148819709
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1148819704}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f79ab5d57579948409d195d89f5e6bf7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1188164419
 GameObject:
   m_ObjectHideFlags: 0
@@ -916,7 +961,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1188164419}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
@@ -1094,7 +1139,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2044653986}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 

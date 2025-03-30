@@ -4,27 +4,44 @@ public class PitchWheelLogic : BaseWheelLogic
 {
     public PitchSetCollectionSO collection;
     protected override InputSource Source => InputSource.LeftStick;
-    protected override WheelManager.Values InputHeld()
+    private PitchSetSO Current
     {
-        int segment = GetSegment(collection.Current.pitches.Count);
-        int pitchOffset = collection.Current.pitches[segment];
-
-        return new WheelManager.Values()
+        get
+        {
+            if (GlobalWheelState.IsChromatic) return collection.chromatic;
+            else
+            {
+                switch (GlobalWheelState.CurrentTonality)
+                {
+                    case GlobalWheelState.Tonality.Major: default:
+                        return collection.major;
+                    case GlobalWheelState.Tonality.Minor:
+                        return collection.minor;
+                }
+            }
+        }
+    }
+    protected override int Segments => Current.pitches.Count;
+    protected override GlobalWheelState.Values InputHeld(int segment)
+    {
+        return new GlobalWheelState.Values()
         {
             leftHeld = true,
-            rightHeld = WheelManager.Current.rightHeld,
-            rootIntervalOffset = pitchOffset,
-            chord = WheelManager.Current.chord
+            rightHeld = GlobalWheelState.Current.rightHeld,
+            pitchIndex = segment,
+            pitchSet = Current,
+            chordSet = GlobalWheelState.Current.chordSet
         };
     }
-    protected override WheelManager.Values InputReleased()
+    protected override GlobalWheelState.Values InputReleased()
     {
-        return new WheelManager.Values()
+        return new GlobalWheelState.Values()
         {
             leftHeld = false,
-            rightHeld = WheelManager.Current.rightHeld,
-            rootIntervalOffset = WheelManager.Current.rootIntervalOffset,
-            chord = WheelManager.Current.chord
+            rightHeld = GlobalWheelState.Current.rightHeld,
+            pitchIndex = GlobalWheelState.Current.pitchIndex,
+            pitchSet = Current,
+            chordSet = GlobalWheelState.Current.chordSet
         };
     }
 }

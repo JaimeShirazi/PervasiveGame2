@@ -5,12 +5,13 @@ public class InputManager : MonoBehaviour
 {
     public static Vector2 left, right;
 
-    private InputAction actionLeft, actionRight;
+    private InputAction actionLeft, actionRight, actionChromatic;
 
     private void Awake()
     {
         actionLeft = InputSystem.actions.FindActionMap("Controls").FindAction("Left");
         actionRight = InputSystem.actions.FindActionMap("Controls").FindAction("Right");
+        actionChromatic = InputSystem.actions.FindActionMap("Controls").FindAction("Chromatic");
     }
 
     void OnEnable()
@@ -19,6 +20,7 @@ public class InputManager : MonoBehaviour
         actionLeft.canceled += OnLeftCanceled;
         actionRight.performed += OnRightPerformed;
         actionRight.canceled += OnRightCanceled;
+        actionChromatic.performed += OnChromaticPerformed;
     }
     void OnDisable()
     {
@@ -26,6 +28,7 @@ public class InputManager : MonoBehaviour
         actionLeft.canceled -= OnLeftCanceled;
         actionRight.performed -= OnRightPerformed;
         actionRight.canceled -= OnRightCanceled;
+        actionChromatic.performed -= OnChromaticPerformed;
     }
     private void OnLeftPerformed(InputAction.CallbackContext context)
     {
@@ -42,5 +45,9 @@ public class InputManager : MonoBehaviour
     private void OnRightCanceled(InputAction.CallbackContext context)
     {
         right = Vector2.zero;
+    }
+    private void OnChromaticPerformed(InputAction.CallbackContext context)
+    {
+        GlobalWheelState.SetChromatic(!GlobalWheelState.IsChromatic);
     }
 }

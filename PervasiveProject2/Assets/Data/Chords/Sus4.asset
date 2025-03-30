@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5efb172372f95124b9e6d62a94baa7f3, type: 3}
+  m_Name: Sus4
+  m_EditorClassIdentifier: 
+  label: Suspended 4th
+  chord1: 5
+  chord2: 5
+  chord3: 5
+  chord4: 5
+  chord5: 5
+  chord6: 5
+  chord7: 5
+  chord8: 5
+  chord9: 5
+  chord10: 5
+  chord11: 5
+  chord12: 5

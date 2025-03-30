@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d29cd6d9b136dc14b8566cca5f63cca0, type: 3}
   m_Name: Default Pitch Set Collection
   m_EditorClassIdentifier: 
-  sets:
-  - {fileID: 11400000, guid: cb7a4bddeddf509438d3aff7affa88d3, type: 2}
-  - {fileID: 11400000, guid: f16f688adb12451448236352b5e5ce7a, type: 2}
+  major: {fileID: 11400000, guid: cb7a4bddeddf509438d3aff7affa88d3, type: 2}
+  minor: {fileID: 11400000, guid: f16f688adb12451448236352b5e5ce7a, type: 2}
+  chromatic: {fileID: 11400000, guid: 7c07e48dbd1018242a39da9801a19737, type: 2}

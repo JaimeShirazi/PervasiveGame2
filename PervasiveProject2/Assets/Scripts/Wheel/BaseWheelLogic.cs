@@ -3,11 +3,13 @@ using UnityEngine;
 
 public abstract class BaseWheelLogic : MonoBehaviour
 {
+    [SerializeField] private WheelVisual visual;
     public enum InputSource
     {
         LeftStick, RightStick
     }
     protected abstract InputSource Source { get; }
+    protected abstract int Segments { get; }
     protected Vector2 InputValue => Source switch
     {
         InputSource.RightStick => InputManager.right,
@@ -37,19 +39,24 @@ public abstract class BaseWheelLogic : MonoBehaviour
 
     [SerializeField] private RectTransform knob;
 
-    void Update()
+    public void UpdateGlobalWheelState()
     {
         knob.anchoredPosition = InputValue * 128;
 
+        visual.SetCursor((InputValue + Vector2.one) * 0.5f);
+        visual.SetSegments(Segments);
+
         if (InputValue.sqrMagnitude > 0)
         {
-            WheelManager.Current = InputHeld();
+            int segment = GetSegment(Segments);
+            visual.SetSegment(segment);
+            GlobalWheelState.Current = InputHeld(segment);
         }
         else
         {
-            WheelManager.Current = InputReleased();
+            GlobalWheelState.Current = InputReleased();
         }
     }
-    protected abstract WheelManager.Values InputHeld();
-    protected abstract WheelManager.Values InputReleased();
+    protected abstract GlobalWheelState.Values InputHeld(int segment);
+    protected abstract GlobalWheelState.Values InputReleased();
 }
