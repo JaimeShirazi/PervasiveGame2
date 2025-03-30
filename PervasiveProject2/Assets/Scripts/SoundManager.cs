@@ -15,7 +15,6 @@ public class SoundManager : MonoBehaviour
             double newPitch = Pitch.GetJustInterval(pitch, interval - rootIntervalOffset);
             pitch = newPitch;
             rootIntervalOffset = interval;
-            Debug.Log(this);
             return newPitch;
         }
         public static WanderingPitchCenter Default => new WanderingPitchCenter()
