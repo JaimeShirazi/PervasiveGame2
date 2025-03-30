@@ -50,130 +50,65 @@ public class WheelLogic : MonoBehaviour
                 if (InputValue.sqrMagnitude > 0)
                 {
                     int segment = GetSegment(7);
-                    WheelManager.SetRoot(segment);
+                    SetRoot(segment);
                 }
                 else
                 {
-                    WheelManager.SetLeftReleased();
+                    SetLeftReleased();
                 }
                 break;
             case InputSource.RightStick:
                 if (InputValue.sqrMagnitude > 0)
                 {
                     int segment = GetSegment(7);
-                    WheelManager.SetChord((Pitch.Chord)segment);
+                    SetChord((Pitch.Chord)segment);
                 }
                 else
                 {
-                    WheelManager.SetRightReleased();
+                    SetRightReleased();
                 }
                 break;
         }
     }
 
-    private static class WheelManager
+    private static void SetRoot(int rootIntervalOffset)
     {
-        private static Values current;
-        public static Values Current
+        WheelManager.Current = new WheelManager.Values()
         {
-            set
-            {
-                if (current != value)
-                {
-                    SetValues(current);
-                }
-            }
-        }
-        private static void SetValues(Values target)
+            leftHeld = true,
+            rightHeld = WheelManager.Current.rightHeld,
+            rootIntervalOffset = rootIntervalOffset,
+            chord = WheelManager.Current.chord
+        };
+    }
+    private static void SetChord(Pitch.Chord chord)
+    {
+        WheelManager.Current = new WheelManager.Values()
         {
-            if (target.Playing)
-            {
-                SoundManager.ReplacePitch(target.chord, target.rootIntervalOffset);
-            }
-            else
-            {
-                SoundManager.Stop();
-            }
-            current = target;
-        }
-        public struct Values : IEquatable<Values>
+            leftHeld = WheelManager.Current.leftHeld,
+            rightHeld = true,
+            rootIntervalOffset = WheelManager.Current.rootIntervalOffset,
+            chord = chord
+        };
+    }
+    private static void SetLeftReleased()
+    {
+        WheelManager.Current = new WheelManager.Values()
         {
-            public bool leftHeld;
-            public bool rightHeld;
-            public bool Playing => leftHeld && rightHeld;
-            public int rootIntervalOffset;
-            public Pitch.Chord chord;
-
-            #region IEquatable
-            public override bool Equals(object obj)
-            {
-                return obj is Values values && Equals(values);
-            }
-
-            public bool Equals(Values other)
-            {
-                return Playing == other.Playing &&
-                       rootIntervalOffset == other.rootIntervalOffset &&
-                       chord == other.chord;
-            }
-
-            public override int GetHashCode()
-            {
-                return HashCode.Combine(Playing, rootIntervalOffset, chord);
-            }
-
-            public static bool operator ==(Values left, Values right)
-            {
-                return left.Equals(right);
-            }
-
-            public static bool operator !=(Values left, Values right)
-            {
-                return !(left == right);
-            }
-            #endregion
-
-            public override string ToString() => string.Format("Left(held: {0}, note: {1}), Right(held: {2}, chord: {3})", leftHeld, rootIntervalOffset, rightHeld, (int)chord);
-        }
-        public static void SetRoot(int rootIntervalOffset)
+            leftHeld = false,
+            rightHeld = WheelManager.Current.rightHeld,
+            rootIntervalOffset = WheelManager.Current.rootIntervalOffset,
+            chord = WheelManager.Current.chord
+        };
+    }
+    private static void SetRightReleased()
+    {
+        WheelManager.Current = new WheelManager.Values()
         {
-            Current = new Values()
-            {
-                leftHeld = true,
-                rightHeld = current.rightHeld,
-                rootIntervalOffset = rootIntervalOffset,
-                chord = current.chord
-            };
-        }
-        public static void SetChord(Pitch.Chord chord)
-        {
-            Current = new Values()
-            {
-                leftHeld = current.leftHeld,
-                rightHeld = true,
-                rootIntervalOffset = current.rootIntervalOffset,
-                chord = chord
-            };
-        }
-        public static void SetLeftReleased()
-        {
-            Current = new Values()
-            {
-                leftHeld = false,
-                rightHeld = current.rightHeld,
-                rootIntervalOffset = current.rootIntervalOffset,
-                chord = current.chord
-            };
-        }
-        public static void SetRightReleased()
-        {
-            Current = new Values()
-            {
-                leftHeld = current.leftHeld,
-                rightHeld = false,
-                rootIntervalOffset = current.rootIntervalOffset,
-                chord = current.chord
-            };
-        }
+            leftHeld = WheelManager.Current.leftHeld,
+            rightHeld = false,
+            rootIntervalOffset = WheelManager.Current.rootIntervalOffset,
+            chord = WheelManager.Current.chord
+        };
     }
 }

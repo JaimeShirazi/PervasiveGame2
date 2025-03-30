@@ -121,10 +121,6 @@ public class WaveCalculator
         }
     }
 
-    private int bufferSize;
-    private int channels;
-    private int sampleRate;
-
     public void Set(WaveData newData, double time)
     {
         if (data == newData) return;

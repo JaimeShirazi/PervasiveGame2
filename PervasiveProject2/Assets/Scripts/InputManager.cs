@@ -27,25 +27,13 @@ public class InputManager : MonoBehaviour
         actionRight.performed -= OnRightPerformed;
         actionRight.canceled -= OnRightCanceled;
     }
-
-    private static bool debugPlaying;
     private void OnLeftPerformed(InputAction.CallbackContext context)
     {
         left = context.ReadValue<Vector2>();
-        if (!debugPlaying)
-        {
-            debugPlaying = true;
-            SoundManager.ReplacePitch(Pitch.Chord.Maj, 0);
-        }
     }
     private void OnLeftCanceled(InputAction.CallbackContext context)
     {
         left = Vector2.zero;
-        if (debugPlaying)
-        {
-            debugPlaying = false;
-            SoundManager.Stop();
-        }
     }
     private void OnRightPerformed(InputAction.CallbackContext context)
     {
