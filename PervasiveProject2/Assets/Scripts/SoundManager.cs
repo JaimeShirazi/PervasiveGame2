@@ -15,6 +15,7 @@ public class SoundManager : MonoBehaviour
             double newPitch = Pitch.GetJustInterval(pitch, interval - rootIntervalOffset);
             pitch = newPitch;
             rootIntervalOffset = interval;
+            Debug.Log(this);
             return newPitch;
         }
         public static WanderingPitchCenter Default => new WanderingPitchCenter()
@@ -22,6 +23,7 @@ public class SoundManager : MonoBehaviour
             rootIntervalOffset = 0,
             pitch = 440.0
         };
+        public override string ToString() => string.Format("Pitch: {0}, Semitone offset from root: {1}", pitch, rootIntervalOffset);
     }
 
     private WanderingPitchCenter pitch = WanderingPitchCenter.Default;
@@ -45,6 +47,10 @@ public class SoundManager : MonoBehaviour
     }
     public static void Stop()
     {
+        foreach (WaveData data in instance.pendingWaveData)
+        {
+            data.Dispose();
+        }
         instance.pendingWaveData.Clear();
         instance.pendingWaveEnds.AddRange(instance.activeWaves);
     }

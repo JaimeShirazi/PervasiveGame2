@@ -78,18 +78,16 @@ public class WaveCalculator
     private PredictiveBuffer buffer;
     public struct PredictiveBuffer
     {
-        private bool created;
         private int channels, sampleRate;
         private double time;
         private NativeArray<float> queue;
         private JobHandle job;
         public PredictiveBuffer(WaveData data, int length, int channels, int sampleRate, double time)
         {
-            created = true;
             this.channels = channels;
             this.sampleRate = sampleRate;
             this.time = time;
-            queue = new NativeArray<float>(length, Allocator.TempJob);
+            queue = new NativeArray<float>(length, Allocator.Persistent); //I would like to use Allocator.TempJob but unfortunately there is likely to be more than 4 frames between each audio callback
             job = Calculate(data, queue, channels, sampleRate, time);
         }
         public bool AppendDataIfCompatible(float[] target, int channels, int sampleRate, double time)
@@ -112,7 +110,7 @@ public class WaveCalculator
 
             return false;
         }
-        public bool IsCreated => created;
+        public bool IsCreated => queue.IsCreated;
         public void Dispose()
         {
             job.Complete();
@@ -150,6 +148,9 @@ public class WaveCalculator
                 queue[i] += nativeQueue[i];
             }
             nativeQueue.Dispose();
+
+            if (buffer.IsCreated)
+                buffer.Dispose();
         }
 
         buffer = new(data, queue.Length, channels, sampleRate, time + (queue.Length / (double)sampleRate));
