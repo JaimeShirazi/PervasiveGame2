@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Dom7
   m_EditorClassIdentifier: 
   label: Dominant 7th
+  associatedTonality: 2
   chord1: 3
   chord2: 3
   chord3: 3

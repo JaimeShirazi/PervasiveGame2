@@ -20,13 +20,76 @@ public static class Pitch
           9  => (5.0  / 3.0)  * root, //Major sixth
           10 => (9.0  / 5.0)  * root, //Minor seventh
           11 => (15.0 / 8.0)  * root, //Major seventh
-          12 => 2.0           * root, //Perfect octave
-        > 12 => GetJustInterval(root * 2.0, semitones - 12)
+        > 11 => GetJustInterval(root * 2.0, semitones - 12)
     };
     public enum Chord
     {
         Maj, Min, Min7, Dom7, Dom9, Sus4, Maj7, Dim, HalfDim
     }
+    private const char FLAT = '\uE260';
+    private const char SHARP = '\uE262';
+
+    private const char SYMBOL_DIM = '\uE870';
+    private const char SYMBOL_HALF_DIM = '\uE871';
+    private const char SYMBOL_MAJ7 = '\uE873';
+    private static string GetDisplayChordCenter(int offset)
+    {
+        switch (GlobalWheelState.CurrentTonality)
+        {
+            case GlobalWheelState.Tonality.Major: default:
+                return offset switch
+                {
+                    < 0  => GetDisplayChordCenter(offset + 12),
+                      0  => "I",
+                      1  => FLAT + "II",
+                      2  => "II",
+                      3  => FLAT + "III",
+                      4  => "III",
+                      5  => "IV",
+                      6  => FLAT + "V",
+                      7  => "V",
+                      8  => FLAT + "VI",
+                      9  => "VI",
+                      10 => FLAT + "VII",
+                      11 => "VII",
+                    > 11 => GetDisplayChordCenter(offset - 12)
+                };
+            case GlobalWheelState.Tonality.Minor:
+                return offset switch
+                {
+                    < 0  => GetDisplayChordCenter(offset + 12),
+                      0  => "I",
+                      1  => FLAT + "II",
+                      2  => "II",
+                      3  => "III",
+                      4  => SHARP + "III",
+                      5  => "IV",
+                      6  => FLAT + "V",
+                      7  => "V",
+                      8  => "VI",
+                      9  => SHARP + "VI",
+                      10 => "VII",
+                      11 => "VII",
+                    > 11 => GetDisplayChordCenter(offset - 12)
+                };
+        }
+    }
+    public static string GetDisplayChord(int offset, Chord chord)
+    {
+        return chord switch
+        {
+            Chord.Sus4 => GetDisplayChordCenter(offset) + "sus4",
+            Chord.Min => GetDisplayChordCenter(offset).ToLower(),
+            Chord.Dim => GetDisplayChordCenter(offset) + SYMBOL_DIM + "7",
+            Chord.HalfDim => GetDisplayChordCenter(offset) + SYMBOL_HALF_DIM + "7",
+            Chord.Min7 => GetDisplayChordCenter(offset).ToLower() + "7",
+            Chord.Dom7 => GetDisplayChordCenter(offset) + "7",
+            Chord.Maj7 => GetDisplayChordCenter(offset) + SYMBOL_MAJ7 + "7",
+            Chord.Dom9 => GetDisplayChordCenter(offset) + "9",
+            Chord.Maj or _ => GetDisplayChordCenter(offset)
+        };
+    }
+    
     public static int[] GetChordIntervalOffsets(Chord chord) => chord switch
     {
         Chord.Sus4     => new int[] { 0, 5, 7 },

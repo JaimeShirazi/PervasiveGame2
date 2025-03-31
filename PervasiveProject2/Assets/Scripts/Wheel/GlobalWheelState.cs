@@ -1,6 +1,5 @@
 using System;
 using UnityEngine;
-using static UnityEngine.GraphicsBuffer;
 
 public static class GlobalWheelState
 {
@@ -132,10 +131,12 @@ public static class GlobalWheelState
         {
             int pitch = current.pitchSet.pitches[current.pitchIndex];
             SoundManager.ReplacePitch(current.chordSet.GetChord(pitch), pitch);
+            ChordSymbolDisplayUI.Set(pitch, current.chordSet.GetChord(pitch));
         }
         else
         {
             SoundManager.Stop();
+            ChordSymbolDisplayUI.Unset();
         }
     }
     #endregion
