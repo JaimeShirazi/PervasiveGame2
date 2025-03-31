@@ -22,7 +22,7 @@ public static class GlobalChordState
         if ((int)source >= current)
         {
             SoundManager.ReplacePitch(sources[source].Value.Item2, sources[source].Value.Item1);
-            ChordSymbolDisplayUI.Set(sources[source].Value.Item1, sources[source].Value.Item2);
+            //ChordSymbolDisplayUI.Set(sources[source].Value.Item1, sources[source].Value.Item2);
             current = (int)source;
         }
     }
@@ -44,7 +44,7 @@ public static class GlobalChordState
                     if (sources[(Source)i].HasValue)
                     {
                         SoundManager.ReplacePitch(sources[(Source)i].Value.Item2, sources[(Source)i].Value.Item1);
-                        ChordSymbolDisplayUI.Set(sources[(Source)i].Value.Item1, sources[(Source)i].Value.Item2);
+                        //ChordSymbolDisplayUI.Set(sources[(Source)i].Value.Item1, sources[(Source)i].Value.Item2);
                         current = (int)source;
                         return;
                     }
@@ -54,6 +54,6 @@ public static class GlobalChordState
 
         current = -1;
         SoundManager.Stop();
-        ChordSymbolDisplayUI.Unset();
+        //ChordSymbolDisplayUI.Unset();
     }
 }

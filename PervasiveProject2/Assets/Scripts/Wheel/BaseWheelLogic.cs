@@ -36,13 +36,8 @@ public abstract class BaseWheelLogic : MonoBehaviour
         //Determine the current segment
         return Mathf.FloorToInt(offsetAngle / segmentAngle);
     }
-
-    [SerializeField] private RectTransform knob;
-
     public void UpdateGlobalWheelState()
     {
-        knob.anchoredPosition = InputValue * 128;
-
         visual.SetCursor((InputValue + Vector2.one) * 0.5f);
         visual.SetSegments(Segments);
 
