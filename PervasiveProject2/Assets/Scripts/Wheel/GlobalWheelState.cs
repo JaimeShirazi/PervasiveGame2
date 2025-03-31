@@ -88,6 +88,12 @@ public static class GlobalWheelState
         }
         #endregion
 
+        public (int, Pitch.Chord) GetValues()
+        {
+            int offset = pitchSet.pitches[pitchIndex];
+            Pitch.Chord chord = chordSet.GetChord(offset);
+            return (offset, chord);
+        }
         private int[] GetNotesAsOffsets()
         {
             int pitch = pitchSet.pitches[pitchIndex];
@@ -113,6 +119,7 @@ public static class GlobalWheelState
 
             return true;
         }
+        public bool IsCreated => pitchSet != null && chordSet != null;
 
         public override string ToString() => string.Format("Playing {0}, Notes {1}", Playing, GetNotesAsOffsets());
     }
@@ -121,7 +128,10 @@ public static class GlobalWheelState
         Values prev = current;
         current = target;
 
-        if (prev.IsStateEqual(target)) return;
+        if (prev.IsCreated)
+        {
+            if (prev.IsStateEqual(target)) return;
+        }
 
         changed = true;
     }
@@ -129,14 +139,12 @@ public static class GlobalWheelState
     {
         if (current.Playing)
         {
-            int pitch = current.pitchSet.pitches[current.pitchIndex];
-            SoundManager.ReplacePitch(current.chordSet.GetChord(pitch), pitch);
-            ChordSymbolDisplayUI.Set(pitch, current.chordSet.GetChord(pitch));
+            (int, Pitch.Chord) values = current.GetValues();
+            GlobalChordState.StartPlaying(values.Item1, values.Item2, GlobalChordState.Source.WheelPlayback);
         }
         else
         {
-            SoundManager.Stop();
-            ChordSymbolDisplayUI.Unset();
+            GlobalChordState.StopPlaying(GlobalChordState.Source.WheelPlayback);
         }
     }
     #endregion
