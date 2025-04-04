@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5efb172372f95124b9e6d62a94baa7f3, type: 3}
+  m_Name: Dom9
+  m_EditorClassIdentifier: 
+  label: Dominant 9th
+  associatedTonality: 2
+  chord1: 4
+  chord2: 4
+  chord3: 4
+  chord4: 4
+  chord5: 4
+  chord6: 4
+  chord7: 4
+  chord8: 4
+  chord9: 4
+  chord10: 4
+  chord11: 4
+  chord12: 4
