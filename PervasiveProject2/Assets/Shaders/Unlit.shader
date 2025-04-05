@@ -2,7 +2,7 @@ Shader "Custom/Unlit"
 {
     Properties
     {
-        [MainTexture] _BaseTex("Base Texture", 2D) = "white" {}
+        [MainTexture] _MainTex("Base Texture", 2D) = "white" {}
     }
     SubShader
     {
@@ -16,7 +16,13 @@ Shader "Custom/Unlit"
 
         Pass
         {
-            Cull Off
+            Name "ForwardLit"
+            Tags
+            {
+                "LightMode" = "UniversalForward"
+            }
+
+            Cull Back
 		    Blend Off
 		    ZWrite On
             ZTest LEqual
@@ -33,6 +39,7 @@ Shader "Custom/Unlit"
             // Declare all material properties in a single CBUFFER for SRP Batcher compatibility
             CBUFFER_START(UnityPerMaterial)
                 sampler2D _MainTex;
+                float4 _MainTex_ST;
             CBUFFER_END
 
             struct appdata
@@ -55,7 +62,7 @@ Shader "Custom/Unlit"
                 return o;
             }
 
-            half3 frag (v2f i) : SV_Target
+            float4 frag (v2f i) : SV_Target
             {
                 float4 col = tex2D(_MainTex, i.uv);
     
