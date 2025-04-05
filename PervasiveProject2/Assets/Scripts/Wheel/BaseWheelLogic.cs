@@ -1,9 +1,10 @@
 using System;
 using UnityEngine;
+using static UnityEngine.Rendering.HableCurve;
 
 public abstract class BaseWheelLogic : MonoBehaviour
 {
-    [SerializeField] private WheelVisual visual;
+    [SerializeField] private LilypadVisual visual;
     public enum InputSource
     {
         LeftStick, RightStick
@@ -38,9 +39,6 @@ public abstract class BaseWheelLogic : MonoBehaviour
     }
     public void UpdateGlobalWheelState()
     {
-        visual.SetCursor((InputValue + Vector2.one) * 0.5f);
-        visual.SetSegments(Segments);
-
         if (InputValue.sqrMagnitude > 0)
         {
             int segment = GetSegment(Segments);
@@ -50,6 +48,7 @@ public abstract class BaseWheelLogic : MonoBehaviour
         else
         {
             GlobalWheelState.Current = InputReleased();
+            visual.SetSegment(-1);
         }
     }
     protected abstract GlobalWheelState.Values InputHeld(int segment);
