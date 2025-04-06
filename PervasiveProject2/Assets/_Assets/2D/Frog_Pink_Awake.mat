@@ -20,8 +20,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Lilypad
-  m_Shader: {fileID: 4800000, guid: cf438f8256fa36b41ba6dac6195d0d33, type: 3}
+  m_Name: Frog_Pink_Awake
+  m_Shader: {fileID: 4800000, guid: 3f10950aaa87307489b24e9680d6f566, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -66,7 +66,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: fd21cdfbe030fae45a837a430d5b7191, type: 3}
+        m_Texture: {fileID: 2800000, guid: 7b0896b9353e4c2459fc49b24e83cd0d, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:

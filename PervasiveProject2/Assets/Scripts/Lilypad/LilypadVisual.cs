@@ -2,10 +2,17 @@ using UnityEngine;
 
 public class LilypadVisual : MonoBehaviour
 {
+    public enum FrogColour
+    {
+        Pink, Purple
+    }
+    [SerializeField] private FrogColour colour;
+    public FrogColour Colour => colour;
+
     [SerializeField] private float size = 4f;
 
     [Range(0f, 1f)]
-    [SerializeField] private float xRatio = 0.25f;
+    public float xRatio = 0.25f;
 
     [SerializeField] private MeshRenderer frog;
 
@@ -13,7 +20,7 @@ public class LilypadVisual : MonoBehaviour
 
     const float SPEED = 20f;
     private float target;
-    private float angle;
+    public float angle;
     public void SetSegment(int target)
     {
         if (target < 0)
@@ -49,11 +56,21 @@ public class LilypadVisual : MonoBehaviour
 
         transform.localScale = Vector3.one * size;
     }
-    public Vector2 ReflectDir(Vector2 contact, Vector2 dir)
+    /// <summary>
+    /// Reflects the dir only if the direction is coming toward the lilypad
+    /// </summary>
+    public Vector2 ReflectDir(Vector2 center, Vector2 dir)
     {
-        Vector2 normal = (contact - new Vector2(transform.position.x, transform.position.y)).normalized;
+        Vector2 normal = (center - new Vector2(transform.position.x, transform.position.y)).normalized;
+
+        if (Vector2.Dot(normal, dir) > 0) return dir;
 
         return dir - 2f * Vector2.Dot(dir, normal) * normal;
+    }
+    private Vector2 GetDegreesAsDir(float angle)
+    {
+        angle *= Mathf.Deg2Rad;
+        return new Vector2(Mathf.Sin(angle), Mathf.Cos(angle));
     }
     private Vector2[] GetWedgeAsTriangle()
     {
@@ -61,53 +78,17 @@ public class LilypadVisual : MonoBehaviour
         points[0] = new Vector2(transform.position.x, transform.position.y);
         Vector2 GetDir(float baseAngle, float offset)
         {
-            float targetAngle = (baseAngle + offset) * Mathf.Deg2Rad;
-            return new Vector2(Mathf.Sin(targetAngle), Mathf.Cos(targetAngle));
+            return GetDegreesAsDir(baseAngle + offset);
         }
-        points[1] = GetDir(angle, -(7f / 360f) * 0.5f);
-        points[2] = GetDir(angle, (7f / 360f) * 0.5f);
-        points[1] *= transform.localScale.x; points[2] *= transform.localScale.x;
-        points[1] += points[0]; points[2] += points[0];
+        points[1] = points[0] + (GetDir(angle, -(360f / 7f) * 0.5f) * transform.localScale.x * 0.5f);
+        points[2] = points[0] + (GetDir(angle, (360f / 7f) * 0.5f) * transform.localScale.x * 0.5f);
         return points;
     }
-    /*public bool IsCircleFullyInside(Vector2 circleCenter, float circleRadius)
-    {
-        //First, check if circle intersects any of the vertices
-        Vector2[] points = GetWedgeAsTriangle();
-        for (int i = 0; i < points.Length; i++)
-        {
-            if (Vector2.Distance(points[i], circleCenter) < circleRadius)
-        }
-
-        Vector2.Project
-
-        // Calculate the vector from the wedge tip to the circle center.
-        Vector2 toCircle = circleCenter - new Vector2(transform.position.x, transform.position.y);
-        float distance = toCircle.magnitude;
-
-        // If the circle's center is too close to the tip, the circle might extend behind the tip.
-        if (distance < circleRadius)
-        {
-            return false;
-        }
-
-        // Convert wedge angle to radians and calculate half of it.
-        float halfWedgeAngle = (7f / 360f) * Mathf.Deg2Rad / 2f;
-
-        // Get the angle between the wedge direction and the vector to the circle.
-        // Dot product gives the cosine of the angle between the two normalized vectors.
-        float angleOffset = Mathf.Acos(Vector2.Dot(toCircle.normalized, new Vector2(Mathf.Sin(angle * Mathf.Deg2Rad), Mathf.Cos(angle * Mathf.Deg2Rad))));
-
-        // Calculate the angular radius of the circle as seen from the wedge tip.
-        float circleAngularRadius = Mathf.Asin(circleRadius / distance);
-
-        // The circle is fully inside if the sum of the offset and the circle's angular radius is within half the wedge's angle.
-        return angleOffset + circleAngularRadius <= halfWedgeAngle;
-    }*/
-
     private bool CircleTouchesWedge(Vector2 center, float radius)
     {
         Vector2[] points = GetWedgeAsTriangle();
+        Debug.DrawLine((Vector3)points[0] - Vector3.forward, (Vector3)points[1] - Vector3.forward, Color.red, 0.2f);
+        Debug.DrawLine((Vector3)points[0] - Vector3.forward, (Vector3)points[2] - Vector3.forward, Color.blue, 0.2f);
         return CircleTouchesBorder(center, radius, points[0], points[1]) || CircleTouchesBorder(center, radius, points[0], points[2]);
     }
 
@@ -121,36 +102,63 @@ public class LilypadVisual : MonoBehaviour
 
         // Project the circle center onto the line segment (clamped to segment)
         float t = Vector2.Dot(toCircle, lineDir.normalized);
-        t = Mathf.Clamp(t, 0, lineDir.magnitude);
+
+        //You would typically clamp t to be [0, lineDir.magnitude]
+        //However, in this case we don't want the touch to count if it's from outside of the wedge region
+        if (t < 0 || t > lineDir.magnitude) return false;
 
         // Closest point on the segment to the circle center
         Vector2 closestPoint = lineStart + lineDir.normalized * t;
 
-        // Distance from the circle center to the closest point
-        float distanceSqr = (closestPoint - circleCenter).sqrMagnitude;
+        Debug.DrawLine((Vector3)closestPoint - Vector3.forward, (Vector3)circleCenter - Vector3.forward, Color.green, 0.2f);
 
-        // Check if the distance is less than or equal to radius
-        return distanceSqr <= radius * radius;
+        return Vector2.Distance(closestPoint, circleCenter) < radius;
     }
-    public void CheckBubble(Vector2 center, float radius)
+    public enum BubbleResponse
+    {
+        None, Bounce, Pop
+    }
+    public BubbleResponse CheckBubble(Vector2 center, float radius)
     {
         if (GetIntersectionAngleRange(center, radius, out float angle1, out float angle2))
         {
-            if (!DoAngleRangesOverlap(angle - (7f / 360f) * 0.5f, angle + (7f / 360f) * 0.5f, angle1, angle2))
+            float wallStart = angle + (360f / 7f) * 0.5f;
+            float wallEnd   = angle - (360f / 7f) * 0.5f;
+
+            while (wallStart > wallEnd) wallStart -= 360f;
+            while (angle1    > angle2)  angle1    -= 360f;
+            
+            bool RangeOverlaps(float a1, float a2, float b1, float b2)
             {
-                //Bounce
-                Debug.Log("Bubble should bounce");
-                //Use ReflectDir
+                bool PointIsWithin(float point, float min, float max) => (point > min && point < max);
+                return PointIsWithin(a1, b1, b2) || PointIsWithin(a2, b1, b2)
+                    || PointIsWithin(b1, a1, a2) || PointIsWithin(b2, a1, a2);
+            }
+
+            bool bubbleIn = RangeOverlaps(wallStart, wallEnd, angle1, angle2)
+                || RangeOverlaps(wallStart, wallEnd, angle1 - 360, angle2 - 360)
+                || RangeOverlaps(wallStart - 360, wallEnd - 360, angle1, angle2);
+
+            if (bubbleIn)
+            {
+                return BubbleResponse.Bounce;
             }
             else
             {
                 if (CircleTouchesWedge(center, radius))
                 {
-                    //Pop
-                    Debug.Log("Bubble should pop");
+                    return BubbleResponse.Pop;
                 }
             }
         }
+        else if (Vector2.Distance(center, new Vector2(transform.position.x, transform.position.y)) < transform.localScale.x)
+        {
+            if (CircleTouchesWedge(center, radius))
+            {
+                return BubbleResponse.Pop;
+            }
+        }
+        return BubbleResponse.None;
     }
     #region Angle functions
     /// <summary>
@@ -191,7 +199,9 @@ public class LilypadVisual : MonoBehaviour
                IsAngleInRange(bStart, aStart, aEnd) || IsAngleInRange(bEnd, aStart, aEnd);
     }
     #endregion
-    private bool GetIntersectionAngleRange(Vector2 centerB, float radiusB, out float angle1, out float angle2)
+    private bool GetIntersectionAngleRange(
+        Vector2 centerB, float radiusB,
+        out float angle1, out float angle2)
     {
         Vector2 centerA = new Vector2(transform.position.x, transform.position.y);
         float radiusA = transform.localScale.x / 2f;
@@ -202,42 +212,37 @@ public class LilypadVisual : MonoBehaviour
         // Distance between the centers
         float d = Vector2.Distance(centerA, centerB);
 
-        // Check for intersection conditions: circles must intersect at two points
+        // Check for intersection conditions: circles must intersect in a chord.
         if (d > radiusA + radiusB || d < Mathf.Abs(radiusA - radiusB))
         {
             return false;
         }
 
-        // Calculate the half-angle using the law of cosines
+        // Calculate the half-angle using the law of cosines (in radians)
         float cosHalfAngle = (d * d + radiusA * radiusA - radiusB * radiusB) / (2f * d * radiusA);
-        // Clamp the value to avoid numerical issues
+        // Clamp to avoid any numerical issues
         cosHalfAngle = Mathf.Clamp(cosHalfAngle, -1f, 1f);
         float halfAngle = Mathf.Acos(cosHalfAngle);
 
-        // Calculate the angle of the line from centerA to centerB
+        // Calculate the angle (in radians) from centerA to centerB,
+        // originally relative to the positive horizontal axis, increasing counterclockwise.
         float phi = Mathf.Atan2(centerB.y - centerA.y, centerB.x - centerA.x);
 
-        // The two intersection points on circle A occur at these angles
-        angle1 = phi - halfAngle;
-        angle2 = phi + halfAngle;
+        // The two intersection points on circle A (in radians) relative to the positive x-axis.
+        float rawAngle1 = phi + halfAngle;
+        float rawAngle2 = phi - halfAngle;
 
-        float TransformAngle(float angle)
-        {
-            angle *= Mathf.Rad2Deg;
-            //angle's current range is (-180, 180) and 0 is right, counterclockwise
-            if (angle < 0) angle = 360 + angle;
-            //angle's current range is (0, 360) and 0 is right, counterclockwise
-            angle -= 90;
-            //angle's current range is (-90, 270) and 0 is right, counterclockwise
-            if (angle < 0) angle += 360;
-            //angle's current range is (0, 360) and 0 is up, counterclockwise
-            angle = 360 - angle;
-            //angle's current range is (0, 360) and 0 is up, clockwise
-            return angle;
-        }
+        // Convert from radians (relative to positive x-axis) to degrees.
+        // Then, transform so that 0 degrees = positive vertical axis and angles increase clockwise.
+        // This transformation is: angle = (90 - (rawAngle * Rad2Deg)) mod 360.
 
-        angle1 = TransformAngle(angle2);
-        angle2 = TransformAngle(angle1);
+        angle1 = (90f - rawAngle1 * Mathf.Rad2Deg) % 360f;
+        angle2 = (90f - rawAngle2 * Mathf.Rad2Deg) % 360f;
+
+        // Ensure the angles are positive (0 to 360)
+        if (angle1 < 0) angle1 += 360f;
+        if (angle2 < 0) angle2 += 360f;
+
         return true;
     }
 }

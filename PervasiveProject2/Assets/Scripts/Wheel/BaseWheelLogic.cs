@@ -39,6 +39,15 @@ public abstract class BaseWheelLogic : MonoBehaviour
     }
     public void UpdateGlobalWheelState()
     {
+        switch (visual.Colour)
+        {
+            case LilypadVisual.FrogColour.Pink:
+                ScoreCounter.pinkActive = InputValue.sqrMagnitude > 0;
+                break;
+            case LilypadVisual.FrogColour.Purple:
+                ScoreCounter.purpleActive = InputValue.sqrMagnitude > 0;
+                break;
+        }
         if (InputValue.sqrMagnitude > 0)
         {
             int segment = GetSegment(Segments);
